@@ -128,3 +128,69 @@ crontab -e
 ```
 0 0 * * * /bin/bash /usr/local/bin/ssh_blacklist_update.sh
 ```
+<br>
+
+## 🚨 트러블슈팅 : 크론에서 `sudo` 명령어 실행 문제 해결  
+
+### 문제 : 크론 작업에서 `sudo` 명령어가 정상적으로 실행되지 않음  
+- 크론 작업은 기본적으로 일반 사용자 권한으로 실행되므로 `sudo`가 필요할 경우 실행되지 않을 수 있음  
+- `/var/log/auth.log` 파일이 루트 전용 접근 권한을 가지고 있어 읽을 수 없을 수도 있음  
+
+<br>
+
+### ✅ 해결 방법  
+
+### 1️⃣ 크론을 루트 사용자로 실행  
+- 크론을 루트 권한으로 설정하여 실행하면 `sudo` 없이도 실행 가능  
+```
+sudo crontab -e
+```
+
+#### 📌 아래와 같이 크론 작업을 추가
+```
+*/5 * * * * /bin/bash /usr/local/bin/ssh_fail_log.sh
+```
+
+<br>
+
+### 2️⃣ sudo 없이 실행하도록 스크립트 수정
+- ssh_fail_log.sh 스크립트에서 sudo 제거 후, 크론 작업을 루트 권한으로 실행
+```
+#!/bin/bash
+
+# 로그 파일 설정
+LOG_FILE="/var/log/auth.log"
+
+# 로그 저장 경로 설정
+BASE_DIR="/var/log/ssh_fail_logs"
+TODAY=$(date "+%Y-%m-%d")
+LOG_DIR="$BASE_DIR/$TODAY"
+
+# 저장할 파일
+FAIL_LOG="$LOG_DIR/fail.log"
+
+# 디렉토리 생성 (날짜별 관리)
+mkdir -p "$LOG_DIR"
+
+# 5분마다 실패 로그 저장
+cat "$LOG_FILE" | grep "sshd.*" | grep "Failed" > "$FAIL_LOG"
+
+exit 0
+```
+
+<br>
+
+#### 📌 이후 루트 사용자로 크론 등록
+```
+sudo crontab -e
+
+*/5 * * * * /bin/bash /usr/local/bin/ssh_fail_log.sh
+```
+
+<br>
+
+### 3️⃣ auth.log 접근 권한 문제 해결
+- 크론이 실행될 때 auth.log에 접근할 수 없는 경우, 권한을 조정
+```
+sudo chmod 644 /var/log/auth.log
+```
