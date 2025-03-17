@@ -189,3 +189,17 @@ cat "$LOG_FILE" | grep "sshd.*" | grep "Failed" > "$FAIL_LOG"
 ```
 
 <br>
+
+
+## 🚨 트러블슈팅 : ip 이외에도 출력되는 문제
+
+![image](https://github.com/user-attachments/assets/07938c2f-4bfe-4d0c-955d-92746dc903c1)
+
+
+## 해결 : 정규식을 표현애 ip와 같은 형식만 출력하도록 수정
+```
+# SSH 로그인 실패 로그에서 IP 주소 추출하여 저장
+grep "Failed password" "$LOG_FILE" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' > "$FAIL_LOG"
+```
+
+
