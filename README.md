@@ -31,6 +31,12 @@
 - `/var/log/auth.log`에서 SSH 로그인 실패 로그를 추출하여 `fail.log`에 저장
 - 5분마다 자동 실행되도록 `crontab` 등록
 
+![image](https://github.com/user-attachments/assets/df2fe429-d384-4120-8252-f62a9890caa9)
+
+
+![image](https://github.com/user-attachments/assets/52139ce3-6f0c-4f78-9cd8-d649d16f3dc5)
+
+
 <br>
 
 #### **📌 스크립트 생성 및 설정**
@@ -70,6 +76,11 @@ sudo chmod +x /usr/local/bin/ssh_fail_log.sh
 - 하루 동안 `fail.log`를 분석하여 3번 이상 로그인 실패한 IP를 추출
 - 블랙리스트(`blacklist.txt`)에 저장 후 iptables을 사용해 자동 차단 (추후 개선)
 
+![image](https://github.com/user-attachments/assets/15b7a83f-5047-442f-86d4-9805e7537213)
+
+![image](https://github.com/user-attachments/assets/e4244827-75b9-40fe-8b4c-6b9bac21cd20)
+
+
 <br>
 
 #### **📌 스크립트 생성 및 설정**
@@ -94,12 +105,6 @@ awk '{print $11}' "$FAIL_LOG" | sort | uniq -c | awk '$1 >= 3 {print $2}' > "$BL
 
 exit 0
 ```
-
-
-![alttext](./images/fail_log.png)
-
-
-![alt text](images/fail_log_details.png)
 
 <br>
 
