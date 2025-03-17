@@ -100,6 +100,13 @@ done < "$BLACKLIST_FILE"
 
 exit 0
 ```
+
+
+![alttext](./images/fail_log.png)
+
+
+![alt text](images/fail_log_details.png)
+
 <br>
 
 #### **📌 실행 권한 부여**
